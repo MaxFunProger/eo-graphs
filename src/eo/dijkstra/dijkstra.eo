@@ -10,10 +10,10 @@
 [sz val] > createList
   [i] > creator
     if. > @
-      i.lt ^.sz
+      i.lt $.^.sz
       with.
-        ^.creator (i.plus 1)
-        ^.val
+        $.^.creator (i.plus 1)
+        $.^.val
       list *
   creator 0 > @
 
@@ -75,8 +75,8 @@
             stdout
               sprintf
                 "\n%d"
-                * (^.keys.at i)
-            printLine (^.graph.found (^.keys.at i)).get
+                * ($.^.keys.at i)
+            printLine ($.^.graph.found ($.^.keys.at i)).get
   readGraph 0 > @
 
 # Main Dijkstra algorithm part.
@@ -87,22 +87,22 @@
     [node adjacent-nodes distances path] > updateDistance
       [i dists paths] > updater
         if. > @
-          i.lt ^.adjacent-nodes.length
+          i.lt $.^.adjacent-nodes.length
           if.
             lt.
-              (dists.at ^.node).plus (^.adjacent-nodes.at i).weight
-              dists.at (^.adjacent-nodes.at i).to
+              (dists.at $.^.node).plus ($.^.adjacent-nodes.at i).weight
+              dists.at ($.^.adjacent-nodes.at i).to
             ^.updater
               i.plus 1
               withi.
-                dists.withouti (^.adjacent-nodes.at i).to
-                (^.adjacent-nodes.at i).to
-                (dists.at ^.node).plus (^.adjacent-nodes.at i).weight
+                dists.withouti ($.^.adjacent-nodes.at i).to
+                ($.^.adjacent-nodes.at i).to
+                (dists.at $.^.node).plus ($.^.adjacent-nodes.at i).weight
               withi.
-                paths.withouti (^.adjacent-nodes.at i).to
-                (^.adjacent-nodes.at i).to
-                ^.node
-            ^.updater
+                paths.withouti ($.^.adjacent-nodes.at i).to
+                ($.^.adjacent-nodes.at i).to
+                $.^.node
+            $.^.updater
               i.plus 1
               dists
               paths
@@ -111,35 +111,36 @@
     # Finds next node with minimal disace from 0.
     [minimum-index index] > findNextNode
       if. > @
-        index.gte ^.available.length
+        index.gte $.^.available.length
         minimum-index
         if.
           or.
             minimum-index.eq -1
             lt.
-              ^.distances.at (^.available.at index)
-              ^.distances.at (^.available.at minimum-index)
-          ^.findNextNode index (index.plus 1)
-          ^.findNextNode minimum-index (index.plus 1)
+              $.^.distances.at ($.^.available.at index)
+              $.^.distances.at ($.^.available.at minimum-index)
+          $.^.findNextNode index (index.plus 1)
+          $.^.findNextNode minimum-index (index.plus 1)
     stats.at 0 > distances
     stats.at 1 > path
     findNextNode -1 0 > next-node
     if. > @
       next-node.eq -1
       path
-      ^.findPaths
+      $.^.findPaths
         available.withouti next-node
         updateDistance
           available.at next-node
-          (^.g.found (available.at next-node)).get
+          ($.^.g.found (available.at next-node)).get
           distances
           path
   findPaths > @
     createSequence 0 g.size 1
-    ((createList g.size 2147483647).withouti 0).withi 0 0
-    createList g.size -1
+    *
+      ((createList g.size 2147483647).withouti start).withi start 0
+      ((createList g.size -1).withouti start).withi start start
 
-# Prints out the result: on the i's position parent of i is printed.
+# Prints out the result: on the i's position i's parent is printed.
 [path] > printResult
   seq > @
     *
@@ -151,7 +152,7 @@
           stdout > @
             sprintf
               "%d "
-              * (^.path.at i)
+              * ($.^.path.at i)
 
 # Dijkstra algorithm application.
 [args] > dijkstraApp
