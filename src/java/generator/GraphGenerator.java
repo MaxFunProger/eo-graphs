@@ -26,20 +26,32 @@ public class GraphGenerator {
 
     public static String generateAdjacencyLists(int vNum){
         StringBuilder res = new StringBuilder();
+        res.append(String.format("%d ", vNum));
         if(vNum > 1)
             for(int i = 0; i < vNum; i++){
-                res.append(i);
+                int nodes_cnt = 0;
+                StringBuilder nodes = new StringBuilder();
                 for(int j = 0; j < vNum; j++){
-                    if(i!=j)
-                        res.append(
-                                String.format(
-                                        ":%d:%d",
-                                        j, ThreadLocalRandom.current().nextInt(1, 100)
-                                )
-                        );
+                    if(i!=j) {
+                        int is_taken = ThreadLocalRandom.current().nextInt(0, 100);
+                        if (is_taken % 3 != 0) {
+                          ++nodes_cnt;
+                          nodes.append(
+                                  String.format(
+                                          ":%d:%d",
+                                          j, ThreadLocalRandom.current().nextInt(1, 100)
+                                  )
+                          );
+                        }
+                    }
                 }
+                res.append(String.format("%d ", nodes_cnt));
+                res.append(String.format("%d", i));
+                // res.append(" ");
+                res.append(nodes.toString());
                 res.append(" ");
             }
+        res.append("\n");
         return res.toString();
     }
 
