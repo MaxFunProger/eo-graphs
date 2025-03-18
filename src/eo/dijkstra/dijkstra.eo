@@ -35,37 +35,54 @@
 # Graph implementation.
 [args] > graph
   # Reads graph from adjacency list format.
-  [i] > readGraph
+  [] > readGraph
     # Parses graph single line in adjacency list.
-    [i] > lineParser
+    [i limit] > lineParser
+      [index] > recParser
+        if. > @
+          index.lt ^.limit
+          with.
+            ^.recParser (index.plus 1)
+            edge
+              (sscanf "%d:%d" (^.^.^.args.at index)).at 0
+              (sscanf "%d:%d" (^.^.^.args.at index)).at 1
+          list *
+      recParser i > @
+    [i index-to-read number-of-vertex] > recReader
       if. > @
-        ((sscanf "%d" (^.^.args.at i)).at 0).eq 100
-        list *
-        with.
-          ^.lineParser (i.plus 2)
-          edge
-            (sscanf "%d" (^.^.args.at i)).at 0
-            (sscanf "%d" (^.^.args.at (i.plus 1))).at 0
-    lineParser (i.plus 1) > line
-    if. > @
-      i.lt ^.args.length
-      with.
-        ^.readGraph ((i.plus 2).plus (line.length.times 2))
-        (sscanf "%d" (^.args.at i)).at 0
-        line
-      map *
+        i.lt number-of-vertex
+        seq
+          *
+            (sscanf "%d" (^.^.args.at index-to-read)).at 0 > number-of-edges
+            (sscanf "%d" (^.^.args.at (index-to-read.plus 1))).at 0 > vertex-number
+            with.
+              ^.recReader (i.plus 1) (index-to-read.plus (number-of-edges.plus 2)) number-of-vertex
+              vertex-number
+              lineParser (index-to-read.plus 2) ((number-of-edges.plus index-to-read).plus 2)
+        map *
+    (sscanf "%d" (^.args.at 0)).at 0 > number-of-vertex
+    recReader 0 1 number-of-vertex > @
 
   # Prints graph in adjacency list format.
   [graph] > printGraph
     # Prints line in graph's adjacency list.
     [line] > printLine
-      while > @
-        i.lt line.length > [i] >>
-        [i] >>
-          stdout > @
-            sprintf
-              " %d-%d"
-              * (line.at i).to (line.at i).weight
+      [i] > recPrint
+        if. > @
+          i.lt ^.line.length
+          seq
+            *
+              ^.recPrint (i.plus 1)
+              stdout
+                sprintf
+                  " %d-%d"
+                  * (^.line.at i).to (^.line.at i).weight
+          0
+      if. > @
+        not.
+          line.length.eq 0
+        recPrint 0
+        0
     graph.keys > keys
     while > @
       i.lt keys.length > [i] >>
@@ -75,9 +92,9 @@
             stdout
               sprintf
                 "\n%d"
-                * ($.^.keys.at i)
-            printLine ($.^.graph.found ($.^.keys.at i)).get
-  readGraph 0 > @
+                * (^.keys.at i)
+            printLine (^.graph.found (^.keys.at i)).get
+  readGraph > @
 
 # Main Dijkstra algorithm part.
 [g start] > algo
@@ -137,7 +154,7 @@
   findPaths > @
     createSequence 0 g.size 1
     *
-      ((createList g.size 2147483647).withouti start).withi start 0
+      ((createList g.size positive-infinity).withouti start).withi start 0
       ((createList g.size -1).withouti start).withi start start
 
 # Prints out the result: on the i's position i's parent is printed.
@@ -154,6 +171,8 @@
               "%d "
               * ($.^.path.at i)
 
+# algo g 0 > result
+# printResult result > @
 # Dijkstra algorithm application.
 [args] > dijkstraApp
   graph args > g
