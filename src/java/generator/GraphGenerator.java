@@ -38,7 +38,7 @@ public class GraphGenerator {
                           ++nodes_cnt;
                           nodes.append(
                                   String.format(
-                                          ":%d:%d",
+                                          " %d:%d",
                                           j, ThreadLocalRandom.current().nextInt(1, 100)
                                   )
                           );
