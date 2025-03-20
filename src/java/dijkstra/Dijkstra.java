@@ -42,25 +42,22 @@ public class Dijkstra {
 
   public static void main(String[] args) {
     if (args.length > 0) {
-      int i;
-      int vNum = args.length;
+      int i = 1;
+      int vNum = Integer.parseInt(args[0]);
       int[] GR = new int[vNum * vNum];
       Arrays.fill(GR, 0);
-
-      for (i = 0; i < args.length; i++) {
-        String[] vArray = args[i].split(":");
-        int u, v = 0, w;
-        u = Integer.parseInt(vArray[0]);
-        if (vArray.length > 1) {
-          for (int j = 1; j < vArray.length; j++) {
-            if (j % 2 == 0) {
-              w = Integer.parseInt(vArray[j]);
-              GR[u * vNum + v] = w;
-            } else {
-              v = Integer.parseInt(vArray[j]);
-            }
-          }
+      while (i < args.length) {
+        int number_of_edges = Integer.parseInt(args[i]);
+        int u = Integer.parseInt(args[i + 1]);
+        i += 2;
+        for (int j = 0; j < number_of_edges; ++j) {
+          int v, w;
+          String[] tmp = args[i + j].split(":");
+          v = Integer.parseInt(tmp[0]);
+          w = Integer.parseInt(tmp[1]);
+          GR[u * vNum + v] = w;
         }
+        i += number_of_edges;
       }
       dijkstra(vNum, GR, 0);
     }
