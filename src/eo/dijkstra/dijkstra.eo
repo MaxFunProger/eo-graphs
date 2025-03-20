@@ -30,6 +30,8 @@
   creator start > @
 
 # Graph edge in adjacency list implementation.
+# 'to' - the vertex to which the edge leads,
+# 'weight' - weight of the edge.
 [to weight] > edge
 
 # Graph implementation.
@@ -97,10 +99,14 @@
   readGraph > @
 
 # Main Dijkstra algorithm part.
+# 'g' - a map that contains graph in ajacency list format:
+# 'g.at vertex-index' allows to get a list of 'edge's from
+# this vertex.
+# 'start' - vertex from which algorithm starts.
 [g start] > algo
-  # Finds minimal-weight paths from 0 to all other nodes.
+  # Finds minimal-weight paths from 'start' to all other vertexes.
   [available stats] > findPaths
-    # Updates distances and paths with chosen node.
+    # Updates distances and paths with chosen vertex.
     [node adjacent-nodes distances path] > updateDistance
       [i dists paths] > updater
         if. > @
@@ -125,7 +131,7 @@
               paths
           list (* dists paths)
       updater 0 distances path > @
-    # Finds next node with minimal disace from 0.
+    # Finds next vertex with minimal distance from 'start'.
     [minimum-index index] > findNextNode
       if. > @
         index.gte $.^.available.length
@@ -157,7 +163,8 @@
       ((createList g.size positive-infinity).withouti start).withi start 0
       ((createList g.size -1).withouti start).withi start start
 
-# Prints out the result: on the i's position i's parent is printed.
+# Prints out the result: on the i's position parent of i's vertex
+# is printed.
 [path] > printResult
   seq > @
     *
@@ -171,8 +178,6 @@
               "%d "
               * ($.^.path.at i)
 
-# algo g 0 > result
-# printResult result > @
 # Dijkstra algorithm application.
 [args] > dijkstraApp
   graph args > g
