@@ -56,7 +56,7 @@ run:
 		$(C); printcpp $$($(TARGPATH)/cpp/kruskal $$var); \
 		
 	@cd ../../src/eo/kruskal
-		$(E); printeo @$$(eoc --easy dataize kruskalApp $$var)
+		# $(E); printeo @$$(eoc --easy dataize kruskalApp $$var)
 	@cd ../../../tests/edges/
 		echo "\n";
 	done
@@ -69,7 +69,7 @@ run:
 		$(C); printcpp $$($(TARGPATH)/cpp/prim $$var); \
 
 	@cd ../../src/eo/prim
-		$(E); printeo @$$(eoc --easy dataize primApp $$var)
+		# $(E); printeo @$$(eoc --easy dataize primApp $$var)
 	@cd ../../../tests/edges/
 		echo "\n";
 	done
@@ -81,6 +81,10 @@ run:
 		echo "Test ($$FILE) is running"; \
 		$(J); printjava $$(java -cp $(TARGPATH)/java Dijkstra $$var); \
 		$(C); printcpp $$($(TARGPATH)/cpp/dijkstra $$var); \
+	
+	@cd ../../src/eo/dijkstra
+		# $(E); printeo @$$(eoc --easy dataize dijkstraApp $$var)
+	@cd ../../../tests/list/
 		echo "\n";
 	done
 
